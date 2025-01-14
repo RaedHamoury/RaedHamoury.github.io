@@ -1,9 +1,11 @@
 
-function validateForm() {
+function validateForm(event) {
+    event.preventDefault();
+
     let valid = true;
     let name = document.getElementById('name').value.trim();
     let age = document.getElementById('age').value;
-    let language = document.getElementById('language').value.trim();
+    let language = document.getElementById('language').value.trim().toLowerCase();
     let hoursPerWeek = document.getElementById('hoursPerWeek').value;
 
     clearErrors();
@@ -14,8 +16,8 @@ function validateForm() {
         valid = false;
     }
 
-    if (!age || age < 18 || age > 100) {
-        document.getElementById('ageError').textContent = "Age must be between 18 and 100.";
+    if (!age || age < 12 || age > 100) {
+        document.getElementById('ageError').textContent = "Age must be between 12 and 100.";
         document.getElementById('age').style.borderColor = "red";
         valid = false;
     }
@@ -26,18 +28,17 @@ function validateForm() {
         valid = false;
     }
 
-    if (!hoursPerWeek || hoursPerWeek < 1 || hoursPerWeek > 50) {
-        document.getElementById('hoursError').textContent = "Hours per week must be between 1 and 50.";
+    if (!hoursPerWeek || hoursPerWeek < 1 || hoursPerWeek > 100) {
+        document.getElementById('hoursError').textContent = "Hours per week must be between 1 and 100.";
         document.getElementById('hoursPerWeek').style.borderColor = "red";
         valid = false;
     }
 
     if (valid) {
-        let totalLearningHours = calculateTotalLearningHours(hoursPerWeek);
-        generateReport(name, age, language, totalLearningHours);
+        recommendCourse(language, hoursPerWeek);
     }
 
-    return valid;
+    return flase;
 }
 
 function clearErrors() {
@@ -50,4 +51,23 @@ function clearErrors() {
     document.getElementById('age').style.borderColor = "";
     document.getElementById('language').style.borderColor = "";
     document.getElementById('hoursPerWeek').style.borderColor = "";
+}
+
+function recommendCourse(language, hoursPerWeek) {
+    let report = document.getElementById('report');
+    let recommendedCourse;
+
+    if (hoursPerWeek <= 5) {
+        recommendedCourse = `${capitalize(language)} Introduction`;
+    } else if (hoursPerWeek <= 20) {
+        recommendedCourse = `${capitalize(language)} Intermediate`;
+    } else {
+        recommendedCourse = `${capitalize(language)} Advanced`;
+    }
+
+    report.value = `Based on your input, we recommend the "${recommendedCourse}" course. Happy learning!`;
+}
+
+function capitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
 }
